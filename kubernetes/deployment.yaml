@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: spring-boot-crac-demo
+  name: spring-boot-crac-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: spring-boot-crac-demo
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: spring-boot-crac-demo
+        app.kubernetes.io/part-of: spring-boot-crac-demo
+    spec:
+      containers:
+      - image: springdeveloper/spring-boot-crac-demo:checkpoint
+        imagePullPolicy: IfNotPresent
+        name: app
+        securityContext:
+          capabilities:
+            add:
+            - CHECKPOINT_RESTORE
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /actuator/health/liveness
+            port: 8080
+        readinessProbe:
+          httpGet:
+            path: /actuator/health/readiness
+            port: 8080

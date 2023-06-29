@@ -1,0 +1,20 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: spring-boot-crac-demo
+  namespace: default
+spec:
+  template:
+    spec:
+      containers:
+        - image: springdeveloper/spring-boot-crac-demo:checkpoint
+          livenessProbe:
+            httpGet:
+              path: /actuator/info
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+          securityContext:
+            capabilities:
+              add:
+              - CHECKPOINT_RESTORE
