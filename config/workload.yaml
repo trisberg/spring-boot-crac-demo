@@ -8,4 +8,4 @@ metadata:
   annotations:
     autoscaling.knative.dev/min-scale: "0"
 spec:
-  image: sdeleuze/spring-boot-crac-demo:checkpoint
+  image: springdeveloper/spring-boot-crac-demo:checkpoint
