@@ -16,10 +16,20 @@ spec:
         app.kubernetes.io/part-of: spring-boot-crac-demo
     spec:
       containers:
-      - image: springdeveloper/spring-boot-crac-demo:checkpoint
+      - image: springdeveloper/spring-boot-crac-demo:checkpoint-amd64
         imagePullPolicy: IfNotPresent
         name: app
+        env:
+        - name: REVISION_NAME
+          value: "crac-demo"
+        - name: REVISION_UID
+          value: "00001"
+        - name: CRAC_FILES_DIR
+          value: /var/crac/${REVISION_NAME}/${REVISION_UID}
         securityContext:
+          privileged: true
+          allowPrivilegeEscalation: true
+          runAsUser: 0
           capabilities:
             add:
             - CHECKPOINT_RESTORE
@@ -33,3 +43,10 @@ spec:
           httpGet:
             path: /actuator/health/readiness
             port: 8080
+        volumeMounts:
+        - name: crac-cache
+          mountPath: /var/crac
+      volumes:
+      - name: crac-cache
+        persistentVolumeClaim:
+          claimName: spring-crac-cache
