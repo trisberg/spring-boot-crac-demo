@@ -7,22 +7,36 @@ spec:
   template:
     spec:
       containers:
-        - image: springdeveloper/spring-boot-crac-demo:checkpoint-amd64
-          livenessProbe:
-            httpGet:
-              path: /actuator/info
-          readinessProbe:
-            httpGet:
-              path: /actuator/health
-          securityContext:
-            capabilities:
-              add:
-              - CHECKPOINT_RESTORE
-          volumeMounts:
-          - mountPath: /data
-            name: mydata
-            readOnly: true
+      - image: springdeveloper/spring-boot-crac-demo:checkpoint-amd64
+        livenessProbe:
+          httpGet:
+            path: /actuator/info
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+        env:
+        - name: REVISION_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.labels['serving.knative.dev/revision']
+        - name: REVISION_UID
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.labels['serving.knative.dev/revisionUID']
+        - name: CRAC_FILES_DIR
+          value: /var/crac/${REVISION_NAME}/${REVISION_UID}
+        securityContext:
+          capabilities:
+            add:
+            - CHECKPOINT_RESTORE
+        securityContext:
+          capabilities:
+            add:
+            - CAP_CHECKPOINT_RESTORE
+        volumeMounts:
+        - name: crac-cache
+          mountPath: /var/crac
       volumes:
-        - name: mydata
-          persistentVolumeClaim:
-            claimName: crac-claim
+      - name: crac-cache
+        persistentVolumeClaim:
+          claimName: spring-crac-cache

@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: crac-claim
+  name: spring-crac-cache
   namespace: default
 spec:
   accessModes:
