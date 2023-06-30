@@ -18,3 +18,11 @@ spec:
             capabilities:
               add:
               - CHECKPOINT_RESTORE
+          volumeMounts:
+          - mountPath: /data
+            name: mydata
+            readOnly: true
+      volumes:
+        - name: mydata
+          persistentVolumeClaim:
+            claimName: crac-claim
